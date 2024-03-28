@@ -12,7 +12,7 @@ from datetime import datetime
 from dataclasses import dataclass
 
 from SeisData import SeisData
-from Algo import *
+from algo.Algo import *
 
 
 
@@ -30,7 +30,7 @@ def seis_cb(seis, data: pd.DataFrame):
     name = data.iloc[0].symbol
     seis_stored = seises[name]
     if seis_stored.update_price(data):
-        suggestion = calculate_indicator(seis_stored)
+        suggestion = Algo.calculate_indicator(seis_stored)
         if suggestion != 'NA':
             dataset = {
                 'content':
@@ -49,7 +49,7 @@ def prepare_initial_data() -> dict[str, SeisData]:
         name = prices.iloc[0].symbol
         seis_data = SeisData(name, seis, prices)
         seis_data.add_consumer(consumer)
-        prepare_smas(seis_data)
+        Algo.prepare_smas(seis_data)
         seises[name] = seis_data
 
     return seises
