@@ -6,15 +6,15 @@ RUN apt upgrade
 RUN apt install -y git nano curl wget python3 python-is-python3 gcc build-essential 
 
 # dependencies
-RUN mkdir -p temp
-WORKDIR temp
+RUN mkdir -p /root/temp
+WORKDIR /root/temp
 RUN wget https://sourceforge.net/projects/ta-lib/files/ta-lib/0.4.0/ta-lib-0.4.0-src.tar.gz
 RUN tar -xzf ta-lib-0.4.0-src.tar.gz
-WORKDIR ta-lib
+WORKDIR /root/temp/ta-lib
 RUN ./configure --prefix=/usr
 RUN make && make install
 WORKDIR /root
-RUN rm -rf temp
+RUN rm -rf /root/temp
 
 # not necessary
 RUN apt install -y zsh locales locales-all zsh-autosuggestions zsh-syntax-highlighting
