@@ -1,5 +1,5 @@
-from tvDatafeed import TvDatafeedLive, Interval, Seis, Consumer
-import requests
+from tvDatafeed import Seis, Consumer
+from algo.Sma import Sma
 from typing import List
 from datetime import datetime
 import pandas as pd
@@ -10,7 +10,7 @@ class SeisData:
         self._seis = seis
         self._consumers: List[Consumer] = []
         self._prices = prices
-        self._indicators: dict[str, pd.DataFrame] = {}
+        self._indicators: dict[str, Sma] = {}
 
     def add_consumer(self, consumer: Consumer):
         self._consumers.append(consumer)
@@ -27,7 +27,7 @@ class SeisData:
             return True
         return False
 
-    def update_indicators(self, new_indicators: dict[str, pd.DataFrame]):
+    def update_indicators(self, new_indicators: dict[str, Sma]):
         self._indicators = new_indicators # needs improvement in the future
 
     @property

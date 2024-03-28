@@ -1,28 +1,19 @@
-#!/usr/bin/python
 import os
 import sys
 config_dir = os.path.dirname(os.path.abspath(__file__)) + '/../config'
 sys.path.append(config_dir)
 import config
 
-from tvDatafeed import TvDatafeedLive, Interval, Seis, Consumer
+from tvDatafeed import TvDatafeedLive, Interval
 import requests
-from typing import List
-from datetime import datetime
-from dataclasses import dataclass
+import pandas as pd
 
 from SeisData import SeisData
-from algo.Algo import *
+from algo.Sma import Sma
 
 
 
 tvl = TvDatafeedLive(config.USERNAME, config.PASSWORD)
-# symbol = config.LIST_OF_SYMBOLS[0]
-# prices = tvl.get_hist(symbol['symbol'], symbol['exchange'], Interval(symbol['interval']), n_bars = 50)
-# name = prices.iloc[0].symbol
-# seis_data = SeisData(name, None, prices)
-# prepare_smas(seis_data)
-# exit()
 
 webhook = config.WEBHOOK
 
@@ -30,7 +21,7 @@ def seis_cb(seis, data: pd.DataFrame):
     name = data.iloc[0].symbol
     seis_stored = seises[name]
     if seis_stored.update_price(data):
-        suggestion = Algo.calculate_indicator(seis_stored)
+        suggestion = seis_stored._indicators['sma'].sma_decision(seis_stored.prices)
         if suggestion != 'NA':
             dataset = {
                 'content':
@@ -48,8 +39,10 @@ def prepare_initial_data() -> dict[str, SeisData]:
         consumer = seis.new_consumer(seis_cb)
         name = prices.iloc[0].symbol
         seis_data = SeisData(name, seis, prices)
+        sma = Sma()
+        sma.prepare_smas(prices)
+        seis_data.update_indicators({'sma': sma})
         seis_data.add_consumer(consumer)
-        Algo.prepare_smas(seis_data)
         seises[name] = seis_data
 
     return seises
