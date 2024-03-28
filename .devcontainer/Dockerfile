@@ -3,7 +3,7 @@ FROM debian:bookworm-slim
 RUN apt update
 RUN apt upgrade
 
-RUN apt install -y git nano curl wget python3 python-is-python3 python3-venv gcc build-essential 
+RUN apt install -y git nano curl wget python3 python-is-python3 python3-venv python3-dev gcc build-essential 
 
 # dependencies
 RUN mkdir -p /root/temp
