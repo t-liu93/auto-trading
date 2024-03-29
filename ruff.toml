@@ -1,0 +1,6 @@
+target-version = "py39"
+line-length = 144
+
+[lint]
+select = ["ALL"]
+ignore = ["T201", "D", "ANN101"]
