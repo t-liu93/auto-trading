@@ -1,7 +1,6 @@
 import pandas as pd
+from algo.algo import Algo, CrossingType, Trend
 from talib import abstract
-
-from src.algo.algo import Algo, CrossingType, Trend
 
 SMA = abstract.SMA
 
@@ -89,6 +88,7 @@ class Sma(Algo):
         elif fast_mid_status != self._sma_fast_mid_status:
             self._sma_fast_mid_status = fast_mid_status
             self._sma_fast_mid_counter = 1
+        print(fast_mid_status, self._sma_fast_mid_status, self._sma_fast_mid_counter)
 
         # sma fast crossing slow
         fast_slow_status = Sma.determine_crossing(
@@ -102,6 +102,7 @@ class Sma(Algo):
         elif fast_slow_status != self._sma_fast_slow_status:
             self._sma_fast_slow_status = fast_slow_status
             self._sma_fast_slow_counter = 1
+        print(fast_slow_status, self._sma_fast_slow_status, self._sma_fast_slow_counter)
 
         # sma mid crossing slow
         mid_slow_status = Sma.determine_crossing(
@@ -110,10 +111,19 @@ class Sma(Algo):
             new_indicators["sma_slow"].iloc[0],
             new_indicators["sma_slow"].iloc[1],
         )
+        print(mid_slow_status)
         if self.counter_within_range():
-            if mid_slow_status == CrossingType.UP:
+            if (
+                mid_slow_status == CrossingType.UP
+                and self._sma_fast_mid_status == CrossingType.UP
+                and self._sma_fast_slow_status == CrossingType.UP
+            ):
                 return "BULL"
-            elif mid_slow_status == CrossingType.DOWN:  # noqa: RET505
+            elif (  # noqa: RET505
+                mid_slow_status == CrossingType.DOWN
+                and self._sma_fast_mid_status == CrossingType.DOWN
+                and self._sma_fast_slow_status == CrossingType.DOWN
+            ):
                 return "BEAR"
 
         self.reset_counter()

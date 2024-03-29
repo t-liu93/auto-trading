@@ -1,10 +1,9 @@
 import config
 import pandas as pd
+from algo.sma import Sma
 from helper import messaging
+from seis_data import SeisData
 from tvDatafeed import Interval, Seis, TvDatafeedLive
-
-from src.algo.sma import Sma
-from src.seis_data import SeisData
 
 tvl = TvDatafeedLive(config.USERNAME, config.PASSWORD)
 
