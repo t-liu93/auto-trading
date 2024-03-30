@@ -159,9 +159,10 @@ class Ma(Algo):
 
     def make_decision(self, prices: pd.DataFrame) -> int:
         self._calculate_ma(prices)
-        if self._instant_crossing_decision() == 1 or self._movement_decision(prices) == 1:
-            return 1
-        if self._instant_crossing_decision() == -1 or self._movement_decision(prices) == -1:
-            return -1
+        return self._movement_decision()
+        # if self._instant_crossing_decision() == 1 or self._movement_decision(prices) == 1:
+        #     return 1
+        # if self._instant_crossing_decision() == -1 or self._movement_decision(prices) == -1:
+        #     return -1
 
         return 0
