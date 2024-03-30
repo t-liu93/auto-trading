@@ -9,7 +9,7 @@ from tvDatafeed import Interval, Seis, TvDatafeedLive
 
 tvl = TvDatafeedLive(config.USERNAME, config.PASSWORD)
 
-SUGGESTION_THRESHOLD = 2
+SUGGESTION_THRESHOLD = 3
 
 
 def seis_cb(seis: Seis, data: pd.DataFrame) -> None:
