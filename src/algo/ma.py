@@ -6,8 +6,8 @@ from talib import abstract
 
 MA = abstract.EMA
 
-MA_FAST_MID_THRESHOLD = 2
-MA_FAST_SLOW_THRESHOLD = 2
+MA_FAST_MID_THRESHOLD = 1
+MA_FAST_SLOW_THRESHOLD = 1
 
 MA_FAST = 4
 MA_MID = 7
@@ -63,7 +63,6 @@ class Ma(Algo):
 
     def _crossing_decision(self) -> int:
         new_indicators = self._ma.iloc[-2:]
-        print(datetime.now(tz=timezone.utc))
         # ma fast crossing mid
         fast_mid_status = Algo.determine_crossing(
             new_indicators["ma_fast"].iloc[0],
@@ -76,7 +75,6 @@ class Ma(Algo):
         elif fast_mid_status != self._ma_fast_mid_status:
             self._ma_fast_mid_status = fast_mid_status
             self._ma_fast_mid_counter = 1
-        print("fast-mid", fast_mid_status, self._ma_fast_mid_status, self._ma_fast_mid_counter)
 
         # ma fast crossing slow
         fast_slow_status = Algo.determine_crossing(
@@ -90,7 +88,6 @@ class Ma(Algo):
         elif fast_slow_status != self._ma_fast_slow_status:
             self._ma_fast_slow_status = fast_slow_status
             self._ma_fast_slow_counter = 1
-        print("fast-slow", fast_slow_status, self._ma_fast_slow_status, self._ma_fast_slow_counter)
 
         # ma mid crossing slow
         mid_slow_status = Algo.determine_crossing(
@@ -99,7 +96,6 @@ class Ma(Algo):
             new_indicators["ma_slow"].iloc[0],
             new_indicators["ma_slow"].iloc[1],
         )
-        print("mid-slow", mid_slow_status)
         if self.counter_within_range():
             if (
                 mid_slow_status == CrossingType.UP
@@ -139,4 +135,9 @@ class Ma(Algo):
 
     def make_decision(self, prices: pd.DataFrame) -> int:
         self._calculate_ma(prices)
-        return self._movement_decision(prices)
+        if self._crossing_decision() == 1 or self._movement_decision(prices) == 1:
+            return 1
+        if self._crossing_decision() == -1 or self._movement_decision(prices) == -1:
+            return -1
+
+        return 0
