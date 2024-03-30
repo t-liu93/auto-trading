@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 import pandas as pd
-from algo.ma import Ma
+from algo.algo import Algo
 from tvDatafeed import Consumer, Seis
 
 
@@ -11,7 +11,7 @@ class SeisData:
         self._seis = seis
         self._consumers: list[Consumer] = []
         self._prices = prices
-        self._indicators: dict[str, Ma] = {}
+        self._indicators: dict[str, Algo] = {}
 
     def add_consumer(self, consumer: Consumer) -> None:
         self._consumers.append(consumer)
@@ -28,7 +28,7 @@ class SeisData:
             return True
         return False
 
-    def update_indicators(self, new_indicators: dict[str, Ma]) -> None:
+    def update_indicators(self, new_indicators: dict[str, Algo]) -> None:
         self._indicators = new_indicators  # needs improvement in the future
 
     @property
@@ -36,7 +36,7 @@ class SeisData:
         return self._prices
 
     @property
-    def indicators(self) -> dict[str, pd.DataFrame]:
+    def indicators(self) -> dict[str, Algo]:
         return self._indicators
 
     def print_prices(self) -> None:

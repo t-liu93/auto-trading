@@ -3,4 +3,5 @@ line-length = 144
 
 [lint]
 select = ["ALL"]
+fixable = ["UP034", "I001"]
 ignore = ["T201", "D", "ANN101"]

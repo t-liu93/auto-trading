@@ -7,6 +7,7 @@ def send_general_notification(msg: str) -> None:
     requests.post(WEBHOOK, json=dataset, headers={"Content-type": "application/json"})  # noqa: S113
 
 
-def send_symbol_suggestion(symbol: str, suggestion: str) -> None:
-    dataset = {"content": f"Symbol: {symbol}\n" + f"Suggestion: {suggestion}"}
+def send_symbol_suggestion(symbol: str, suggestion: int) -> None:
+    suggestion_str = "BULL" if suggestion > 0 else "BEAR"
+    dataset = {"content": f"Symbol: {symbol}\n" + f"Suggestion: {suggestion_str}"}
     requests.post(WEBHOOK, json=dataset, headers={"Content-type": "application/json"})  # noqa: S113
