@@ -116,6 +116,32 @@ class Ma(Algo):
 
         return 0
 
+    def _instant_crossing_decision(self) -> int:
+        new_indicators = self._ma.iloc[-2:]
+        fast_mid_status = Algo.determine_crossing(
+            new_indicators["ma_fast"].iloc[0],
+            new_indicators["ma_fast"].iloc[1],
+            new_indicators["ma_mid"].iloc[0],
+            new_indicators["ma_mid"].iloc[1],
+        )
+        fast_slow_status = Algo.determine_crossing(
+            new_indicators["ma_fast"].iloc[0],
+            new_indicators["ma_fast"].iloc[1],
+            new_indicators["ma_slow"].iloc[0],
+            new_indicators["ma_slow"].iloc[1],
+        )
+        mid_slow_status = Algo.determine_crossing(
+            new_indicators["ma_mid"].iloc[0],
+            new_indicators["ma_mid"].iloc[1],
+            new_indicators["ma_slow"].iloc[0],
+            new_indicators["ma_slow"].iloc[1],
+        )
+        if fast_mid_status == CrossingType.UP and fast_slow_status == CrossingType.UP and mid_slow_status == CrossingType.UP:
+            return 1
+        if fast_mid_status == CrossingType.DOWN and fast_slow_status == CrossingType.DOWN and mid_slow_status == CrossingType.DOWN:
+            return -1
+        return 0
+
     def _movement_decision(self, prices: pd.DataFrame) -> int:
         latest_ma = self._ma.iloc[-1]
         latest_price = prices.iloc[-1]
@@ -135,9 +161,9 @@ class Ma(Algo):
 
     def make_decision(self, prices: pd.DataFrame) -> int:
         self._calculate_ma(prices)
-        if self._crossing_decision() == 1 or self._movement_decision(prices) == 1:
+        if self._instant_crossing_decision() == 1 or self._movement_decision(prices) == 1:
             return 1
-        if self._crossing_decision() == -1 or self._movement_decision(prices) == -1:
+        if self._instant_crossing_decision() == -1 or self._movement_decision(prices) == -1:
             return -1
 
         return 0
