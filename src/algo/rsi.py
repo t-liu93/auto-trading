@@ -26,11 +26,11 @@ class Rsi(Algo):
     def make_decision(self, prices: pd.DataFrame) -> int:
         self._calculate_rsi(prices)
         latest_rsi = self._rsi.iloc[-1]
-        trend_old_rsi = self._rsi.iloc[-1 - RSI_TREND_BACK_LENGTH]
+        old_rsi = self._rsi.iloc[-1 - RSI_TREND_BACK_LENGTH]
         threshold_high = RSI_THRESHOLD
         threshold_low = 100 - RSI_THRESHOLD
-        if latest_rsi > threshold_high and Algo.determine_trend(trend_old_rsi, latest_rsi) == Trend.FALLING:
+        if latest_rsi > threshold_high and Algo.determine_trend(old_rsi, latest_rsi) == Trend.FALLING:
             return -1
-        if latest_rsi < threshold_low and Algo.determine_trend(trend_old_rsi, latest_rsi) == Trend.RISING:
+        if latest_rsi < threshold_low and Algo.determine_trend(old_rsi, latest_rsi) == Trend.RISING:
             return 1
         return 0

@@ -1,6 +1,7 @@
 import config
 import pandas as pd
 from algo.ma import Ma
+from algo.macd import Macd
 from algo.rsi import Rsi
 from helper import messaging
 from seis_data import SeisData
@@ -17,6 +18,7 @@ def seis_cb(seis: Seis, data: pd.DataFrame) -> None:
     if seis_stored.update_price(data):
         suggestion = seis_stored.indicators["ma"].make_decision(seis_stored.prices)
         suggestion += seis_stored.indicators["rsi"].make_decision(seis_stored.prices)
+        suggestion += seis_stored.indicators["macd"].make_decision(seis_stored.prices)
 
         if abs(suggestion) >= SUGGESTION_THRESHOLD:
             messaging.send_symbol_suggestion(seis.symbol, suggestion)
@@ -40,7 +42,9 @@ def prepare_initial_data() -> dict[str, SeisData]:
         ma.prepare_mas(prices)
         rsi = Rsi()
         rsi.prepare_rsis(prices)
-        seis_data.update_indicators({"ma": ma, "rsi": rsi})
+        macd = Macd()
+        macd.prepare_macds(prices)
+        seis_data.update_indicators({"ma": ma, "rsi": rsi, "macd": macd})
         seis_data.add_consumer(consumer)
         seises[name] = seis_data
 
