@@ -145,23 +145,31 @@ class Ma(Algo):
         latest_price = prices.iloc[-1]
         if (
             latest_price["open"] <= latest_ma["ma_fast"]
-            and latest_price["close"] >= latest_ma["ma_mid"]
-            and latest_ma["ma_fast"] <= latest_ma["ma_mid"]
+            and (
+                (latest_price["close"] >= latest_ma["ma_mid"] and latest_ma["ma_fast"] <= latest_ma["ma_mid"])
+                or (latest_price["close"] >= latest_ma["ma_slow"] and latest_ma["ma_fast"] <= latest_ma["ma_slow"])
+            )
         ) or (
             latest_price["low"] <= latest_ma["ma_fast"]
-            and latest_price["close"] >= latest_ma["ma_mid"]
-            and latest_ma["ma_fast"] <= latest_ma["ma_mid"]
+            and (
+                (latest_price["close"] >= latest_ma["ma_mid"] and latest_ma["ma_fast"] <= latest_ma["ma_mid"])
+                or (latest_price["close"] >= latest_ma["ma_slow"] and latest_ma["ma_fast"] <= latest_ma["ma_slow"])
+            )
             and latest_price["open"] < latest_price["close"]
         ):
             return 1
         if (
             latest_price["open"] >= latest_ma["ma_fast"]
-            and latest_price["close"] <= latest_ma["ma_mid"]
-            and latest_ma["ma_fast"] >= latest_ma["ma_mid"]
+            and (
+                (latest_price["close"] <= latest_ma["ma_mid"] and latest_ma["ma_fast"] >= latest_ma["ma_mid"])
+                or (latest_price["close"] <= latest_ma["ma_slow"] and latest_ma["ma_fast"] >= latest_ma["ma_slow"])
+            )
         ) or (
             latest_price["high"] >= latest_ma["ma_fast"]
-            and latest_price["close"] <= latest_ma["ma_mid"]
-            and latest_ma["ma_fast"] >= latest_ma["ma_mid"]
+            and (
+                (latest_price["close"] <= latest_ma["ma_mid"] and latest_ma["ma_fast"] >= latest_ma["ma_mid"])
+                or (latest_price["close"] <= latest_ma["ma_slow"] and latest_ma["ma_fast"] >= latest_ma["ma_slow"])
+            )
             and latest_price["open"] > latest_price["close"]
         ):
             return -1
