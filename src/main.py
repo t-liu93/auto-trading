@@ -20,10 +20,10 @@ def seis_cb(seis: Seis, data: pd.DataFrame) -> None:
         suggestion = seis_stored.indicators["ma"].make_decision(seis_stored.prices)
         suggestion += seis_stored.indicators["rsi"].make_decision(seis_stored.prices)
         suggestion += seis_stored.indicators["macd"].make_decision(seis_stored.prices)
-        seis_stored.benchmark.update(seis_stored.indicators["ma"])
+        seis_stored.benchmark.update(data.iloc[-1]["close"])
         if abs(suggestion) >= SUGGESTION_THRESHOLD:
             suggestion_type = Type.BULL if suggestion > 0 else Type.BEAR
-            seis_stored.benchmark.create(data.index[0].to_pydatetime(), suggestion_type)
+            seis_stored.benchmark.create(data.index[0].to_pydatetime(), suggestion_type, data.iloc[-1]["close"])
             messaging.send_symbol_suggestion(seis.symbol, suggestion)
 
 
