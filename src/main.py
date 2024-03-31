@@ -4,6 +4,7 @@ from algo.ma import Ma
 from algo.macd import Macd
 from algo.rsi import Rsi
 from helper import messaging
+from helper.benchmark import Benchmark, Type
 from seis_data import SeisData
 from tvDatafeed import Interval, Seis, TvDatafeedLive
 
@@ -19,8 +20,10 @@ def seis_cb(seis: Seis, data: pd.DataFrame) -> None:
         suggestion = seis_stored.indicators["ma"].make_decision(seis_stored.prices)
         suggestion += seis_stored.indicators["rsi"].make_decision(seis_stored.prices)
         suggestion += seis_stored.indicators["macd"].make_decision(seis_stored.prices)
-
+        seis_stored.benchmark.update(seis_stored.indicators["ma"])
         if abs(suggestion) >= SUGGESTION_THRESHOLD:
+            suggestion_type = Type.BULL if suggestion > 0 else Type.BEAR
+            seis_stored.benchmark.create(data.index[0].to_pydatetime(), suggestion_type)
             messaging.send_symbol_suggestion(seis.symbol, suggestion)
 
 
@@ -37,7 +40,7 @@ def prepare_initial_data() -> dict[str, SeisData]:
         seis = tvl.new_seis(symbol["symbol"], symbol["exchange"], Interval(symbol["interval"]))
         consumer = seis.new_consumer(seis_cb)
         name = prices.iloc[0].symbol
-        seis_data = SeisData(name, seis, prices)
+        seis_data = SeisData(name, seis, prices, Benchmark())
         ma = Ma()
         ma.prepare_mas(prices)
         rsi = Rsi()

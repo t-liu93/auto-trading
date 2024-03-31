@@ -2,16 +2,18 @@ from datetime import datetime, timezone
 
 import pandas as pd
 from algo.algo import Algo
+from helper.benchmark import Benchmark
 from tvDatafeed import Consumer, Seis
 
 
 class SeisData:
-    def __init__(self, name: str, seis: Seis, prices: pd.DataFrame) -> None:
+    def __init__(self, name: str, seis: Seis, prices: pd.DataFrame, benchmark: Benchmark) -> None:
         self._symbol_name = name
         self._seis = seis
         self._consumers: list[Consumer] = []
         self._prices = prices
         self._indicators: dict[str, Algo] = {}
+        self._benchmark: Benchmark = benchmark
 
     def add_consumer(self, consumer: Consumer) -> None:
         self._consumers.append(consumer)
@@ -38,6 +40,10 @@ class SeisData:
     @property
     def indicators(self) -> dict[str, Algo]:
         return self._indicators
+
+    @property
+    def benchmark(self) -> Benchmark:
+        return self._benchmark
 
     def print_prices(self) -> None:
         print(datetime.now(tz=timezone.utc))
