@@ -1,5 +1,6 @@
 import pandas as pd
-from algo.algo import Algo, CrossingType
+from algo.algo import Algo, CrossingType, Trend
+from algo.candle import Candle, CandleType
 from talib import abstract
 
 MA = abstract.EMA
@@ -10,6 +11,8 @@ MA_FAST_SLOW_THRESHOLD = 1
 MA_FAST = 4
 MA_MID = 7
 MA_SLOW = 14
+
+NR_BACKSEARCH_REVERSE_CANDLE = 3
 
 
 class Ma(Algo):
@@ -140,7 +143,7 @@ class Ma(Algo):
             return -1
         return 0
 
-    def _movement_decision(self, prices: pd.DataFrame) -> int:
+    def _candle_is_moving_significantly(self, prices: pd.DataFrame) -> Trend:
         latest_ma = self._ma.iloc[-1]
         latest_price = prices.iloc[-1]
         if (
@@ -155,9 +158,9 @@ class Ma(Algo):
                 (latest_price["close"] >= latest_ma["ma_mid"] and latest_ma["ma_fast"] <= latest_ma["ma_mid"])
                 or (latest_price["close"] >= latest_ma["ma_slow"] and latest_ma["ma_fast"] <= latest_ma["ma_slow"])
             )
-            and latest_price["open"] < latest_price["close"]
+            and Candle.determine_candle_trend(latest_price["open"], latest_price["close"]) == CandleType.GREEN
         ):
-            return 1
+            return Trend.RISING
         if (
             latest_price["open"] >= latest_ma["ma_fast"]
             and (
@@ -170,8 +173,50 @@ class Ma(Algo):
                 (latest_price["close"] <= latest_ma["ma_mid"] and latest_ma["ma_fast"] >= latest_ma["ma_mid"])
                 or (latest_price["close"] <= latest_ma["ma_slow"] and latest_ma["ma_fast"] >= latest_ma["ma_slow"])
             )
-            and latest_price["open"] > latest_price["close"]
+            and Candle.determine_candle_trend(latest_price["open"], latest_price["close"]) == CandleType.RED
         ):
+            return Trend.FALLING
+
+        return Trend.NO
+
+    def _previous_reverse_candle_significant(self, prices: pd.DataFrame) -> bool:
+        current_open = prices.iloc[-1]["open"]
+        current_close = prices.iloc[-1]["close"]
+        current_candle = Candle.determine_candle_trend(current_open, current_close)
+        if current_candle == CandleType.GREEN:
+            rev_high: float = None
+            fast_ma: float = None
+            for i in range(NR_BACKSEARCH_REVERSE_CANDLE):
+                real_idx = -1 - i
+                p_open = prices.iloc[real_idx]["open"]
+                p_close = prices.iloc[real_idx]["close"]
+                p_candle = Candle.determine_candle_trend(p_open, p_close)
+                if p_candle == CandleType.RED:
+                    rev_high = prices.iloc[real_idx]["high"]
+                    fast_ma = self._ma.iloc[real_idx]["ma_fast"]
+                    break
+            if rev_high is not None and rev_high >= fast_ma:
+                return True
+        else:
+            rev_low: float = None
+            fast_ma: float = None
+            for i in range(NR_BACKSEARCH_REVERSE_CANDLE):
+                real_idx = -1 - i
+                p_open = prices.iloc[real_idx]["open"]
+                p_close = prices.iloc[real_idx]["close"]
+                p_candle = Candle.determine_candle_trend(p_open, p_close)
+                if p_candle == CandleType.GREEN:
+                    rev_low = prices.iloc[real_idx]["low"]
+                    fast_ma = self._ma.iloc[real_idx]["ma_fast"]
+                    break
+            if rev_low is not None and rev_low <= fast_ma:
+                return True
+        return False
+
+    def _movement_decision(self, prices: pd.DataFrame) -> int:
+        if self._candle_is_moving_significantly(prices) == Trend.RISING and self._previous_reverse_candle_significant(prices):
+            return 1
+        if self._candle_is_moving_significantly(prices) == Trend.FALLING and self._previous_reverse_candle_significant(prices):
             return -1
         return 0
 

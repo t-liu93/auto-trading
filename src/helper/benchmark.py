@@ -13,8 +13,7 @@ class Status(Enum):
     FAIL = 4
 
 
-EVALUATION_THRESHOLD = 5
-EVALUATION_DIFF_RATE = 1.0013
+EVALUATION_THRESHOLD = 10
 
 
 @dataclass
@@ -27,9 +26,10 @@ class BenchmarkData:
 
 
 class Benchmark:
-    def __init__(self) -> None:
+    def __init__(self, eva_diff_rate: float) -> None:
         self._data: dict[datetime, BenchmarkData] = {}
         self.dataToDelete: list[datetime] = []
+        self._evaluation_diff_rate: float = eva_diff_rate
         self._totalSuggestion: int = 0
         self._success: int = 0
         self._fail: int = 0
@@ -46,9 +46,9 @@ class Benchmark:
                 v.status = Status.FAIL
                 self.record_result(v)
             elif (
-                (new_close / v.trigger_close) > EVALUATION_DIFF_RATE
+                (new_close / v.trigger_close) > self._evaluation_diff_rate
                 and v.suggestion_type == Type.BULL
-                or (v.trigger_close / new_close) > EVALUATION_DIFF_RATE
+                or (v.trigger_close / new_close) > self._evaluation_diff_rate
                 and v.suggestion_type == Type.BEAR
             ):
                 v.status = Status.SUCCESS
