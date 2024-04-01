@@ -184,31 +184,21 @@ class Ma(Algo):
         current_close = prices.iloc[-1]["close"]
         current_candle = Candle.determine_candle_trend(current_open, current_close)
         if current_candle == CandleType.GREEN:
-            rev_high: float = 9999
-            rel_ma: float = 0
             for i in range(NR_BACKSEARCH_REVERSE_CANDLE):
                 real_idx = -1 - i
                 p_open = prices.iloc[real_idx]["open"]
                 p_close = prices.iloc[real_idx]["close"]
                 p_candle = Candle.determine_candle_trend(p_open, p_close)
-                if p_candle == CandleType.RED and prices.iloc[real_idx]["high"] < rev_high:
-                    rev_high = prices.iloc[real_idx]["high"]
-                    rel_ma = self._ma.iloc[real_idx]["ma_fast"]
-            if rev_high <= rel_ma:
-                return True
+                if p_candle == CandleType.RED and prices.iloc[real_idx]["high"] < self._ma.iloc[real_idx]["ma_fast"]:
+                    return True
         else:
-            rev_low: float = 0
-            rel_ma: float = 9999
             for i in range(NR_BACKSEARCH_REVERSE_CANDLE):
                 real_idx = -1 - i
                 p_open = prices.iloc[real_idx]["open"]
                 p_close = prices.iloc[real_idx]["close"]
                 p_candle = Candle.determine_candle_trend(p_open, p_close)
-                if p_candle == CandleType.GREEN and prices.iloc[real_idx]["low"] > rev_low:
-                    rev_low = prices.iloc[real_idx]["low"]
-                    rel_ma = self._ma.iloc[real_idx]["ma_fast"]
-            if rev_low >= rel_ma:
-                return True
+                if p_candle == CandleType.GREEN and prices.iloc[real_idx]["low"] > self._ma.iloc[real_idx]["ma_fast"]:
+                    return True
         return False
 
     def _movement_decision(self, prices: pd.DataFrame) -> int:
