@@ -13,6 +13,6 @@ class Candle:
     @staticmethod
     def determine_candle_trend(open_price: float, close_price: float) -> CandleType:
         if open_price >= close_price:
-            return CandleType.GREEN
+            return CandleType.RED
 
-        return CandleType.RED
+        return CandleType.GREEN

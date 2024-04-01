@@ -12,8 +12,8 @@ from algo.rsi import Rsi
 from helper.benchmark import Benchmark, Type
 from seis_data import SeisData
 
-SYMBOL = "BTCUSD"
-EXCHANGE = "COINBASE"
+SYMBOL = "SPY"
+EXCHANGE = ""
 INTERVAL = "1"
 NR_CANDLE = 1000
 
