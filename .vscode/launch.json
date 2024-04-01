@@ -11,5 +11,13 @@
             "program": "src/main.py",
             "console": "integratedTerminal"
         },
+        {
+            "name": "Python Debugger: Backtesting",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "tests/backtesting.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src"
+        },
     ]
 }
