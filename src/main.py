@@ -2,6 +2,7 @@ import config
 import pandas as pd
 from algo.ma import Ma
 from algo.macd import Macd
+from algo.mfi import Mfi
 from algo.rsi import Rsi
 from helper import messaging
 from seis_data import SeisData
@@ -9,7 +10,7 @@ from tvDatafeed import Interval, Seis, TvDatafeedLive
 
 tvl = TvDatafeedLive(config.USERNAME, config.PASSWORD)
 
-SUGGESTION_THRESHOLD = 3
+SUGGESTION_THRESHOLD = 4
 
 
 def seis_cb(seis: Seis, data: pd.DataFrame) -> None:
@@ -19,6 +20,7 @@ def seis_cb(seis: Seis, data: pd.DataFrame) -> None:
         suggestion = seis_stored.indicators["ma"].make_decision(seis_stored.prices)
         suggestion += seis_stored.indicators["rsi"].make_decision(seis_stored.prices)
         suggestion += seis_stored.indicators["macd"].make_decision(seis_stored.prices)
+        suggestion += seis_stored.indicators["mfi"].make_decision(seis_stored.prices)
         if abs(suggestion) >= SUGGESTION_THRESHOLD:
             messaging.send_symbol_suggestion(seis.symbol, suggestion)
 
@@ -43,7 +45,9 @@ def prepare_initial_data() -> dict[str, SeisData]:
         rsi.prepare_rsis(prices)
         macd = Macd()
         macd.prepare_macds(prices)
-        seis_data.update_indicators({"ma": ma, "rsi": rsi, "macd": macd})
+        mfi = Mfi()
+        mfi.prepare_mfis(prices)
+        seis_data.update_indicators({"ma": ma, "rsi": rsi, "macd": macd, "mfi": mfi})
         seis_data.add_consumer(consumer)
         seises[name] = seis_data
 
