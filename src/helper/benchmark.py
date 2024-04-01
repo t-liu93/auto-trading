@@ -13,9 +13,6 @@ class Status(Enum):
     FAIL = 4
 
 
-EVALUATION_THRESHOLD = 10
-
-
 @dataclass
 class BenchmarkData:
     time: datetime
@@ -26,10 +23,11 @@ class BenchmarkData:
 
 
 class Benchmark:
-    def __init__(self, eva_diff_rate: float) -> None:
+    def __init__(self, eva_diff_rate: float, eva_nr_candles: int) -> None:
         self._data: dict[datetime, BenchmarkData] = {}
         self.dataToDelete: list[datetime] = []
         self._evaluation_diff_rate: float = eva_diff_rate
+        self._eva_nr_candles = eva_nr_candles
         self._totalSuggestion: int = 0
         self._success: int = 0
         self._fail: int = 0
@@ -42,7 +40,7 @@ class Benchmark:
     def update(self, new_close: float) -> None:
         self.dataToDelete.clear()
         for v in self._data.values():
-            if v.counter > EVALUATION_THRESHOLD:
+            if v.counter > self._eva_nr_candles:
                 v.status = Status.FAIL
                 self.record_result(v)
             elif (

@@ -21,6 +21,7 @@ INIT_NR_CANDLE = 50
 
 SUGGESTION_THRESHOLD = 4
 EVA_DIFF_RATE = 1.0005
+EVA_NR_CANDLES = 30
 
 tvl = TvDatafeedLive(config.USERNAME, config.PASSWORD)
 
@@ -36,7 +37,7 @@ mfi.prepare_mfis(hist_prices.iloc[0:INIT_NR_CANDLE])
 macd = Macd()
 macd.prepare_macds(hist_prices.iloc[0:INIT_NR_CANDLE])
 seis_data.update_indicators({"ma": ma, "rsi": rsi, "macd": macd, "mfi": mfi})
-benchmark = Benchmark(EVA_DIFF_RATE)
+benchmark = Benchmark(EVA_DIFF_RATE, EVA_NR_CANDLES)
 
 
 def seis_new_price(data: pd.DataFrame) -> None:
