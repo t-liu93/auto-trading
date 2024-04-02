@@ -8,6 +8,7 @@ RSI_TIME_PERIOD = 16
 
 RSI_THRESHOLD = 40
 RSI_TREND_BACK_LENGTH = 1
+RSI_SLOPE_THRESHOLD = 0.2
 
 
 class Rsi(Algo):
@@ -29,8 +30,16 @@ class Rsi(Algo):
         old_rsi = self._rsi.iloc[-1 - RSI_TREND_BACK_LENGTH]
         threshold_downtrend = RSI_THRESHOLD
         threshold_uptrend = 100 - RSI_THRESHOLD
-        if latest_rsi > threshold_downtrend and Algo.determine_trend(old_rsi, latest_rsi) == Trend.FALLING:
+        if (
+            latest_rsi > threshold_downtrend
+            and Algo.determine_trend(old_rsi, latest_rsi) == Trend.FALLING
+            and Algo.calculate_slope_abs(old_rsi, latest_rsi) > RSI_SLOPE_THRESHOLD
+        ):
             return -1
-        if latest_rsi < threshold_uptrend and Algo.determine_trend(old_rsi, latest_rsi) == Trend.RISING:
+        if (
+            latest_rsi < threshold_uptrend
+            and Algo.determine_trend(old_rsi, latest_rsi) == Trend.RISING
+            and Algo.calculate_slope_abs(old_rsi, latest_rsi) > RSI_SLOPE_THRESHOLD
+        ):
             return 1
         return 0

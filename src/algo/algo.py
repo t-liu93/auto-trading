@@ -38,6 +38,16 @@ class Algo:
 
         return Trend.NO
 
+    @staticmethod
+    def calculate_slope(p1: float, p2: float) -> float:
+        normalized_p1 = p1 / p2
+        normalized_p2 = p2 / p2
+        return normalized_p2 - normalized_p1
+
+    @staticmethod
+    def calculate_slope_abs(p1: float, p2: float) -> float:
+        return abs(Algo.calculate_slope(p1, p2))
+
     def make_decision(self, prices: pd.DataFrame) -> int:
         pass
 

@@ -202,9 +202,9 @@ class Ma(Algo):
         return False
 
     def _movement_decision(self, prices: pd.DataFrame) -> int:
-        if self._candle_is_moving_significantly(prices) == Trend.RISING and self._previous_reverse_candle_significant(prices):
+        if self._candle_is_moving_significantly(prices) == Trend.RISING:
             return 2
-        if self._candle_is_moving_significantly(prices) == Trend.FALLING and self._previous_reverse_candle_significant(prices):
+        if self._candle_is_moving_significantly(prices) == Trend.FALLING:
             return -2
         return 0
 

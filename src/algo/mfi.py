@@ -4,10 +4,11 @@ from talib import abstract
 
 MFI = abstract.MFI
 
-MFI_TIME_PERIOD = 20
+MFI_TIME_PERIOD = 16
 
 MFI_THRESHOLD = 60
 MFI_TREND_BACK_LENGTH = 1
+MFI_SLOPE_THRESHOLD = 0.2
 
 
 class Mfi(Algo):
@@ -29,8 +30,16 @@ class Mfi(Algo):
         old_mfi = self._mfi.iloc[-1 - MFI_TREND_BACK_LENGTH]
         threshold_downtrend = MFI_THRESHOLD
         threshold_uptrend = 100 - MFI_THRESHOLD
-        if latest_mfi > threshold_downtrend and Algo.determine_trend(old_mfi, latest_mfi) == Trend.FALLING:
+        if (
+            latest_mfi > threshold_downtrend
+            and Algo.determine_trend(old_mfi, latest_mfi) == Trend.FALLING
+            and Algo.calculate_slope_abs(old_mfi, latest_mfi) > MFI_SLOPE_THRESHOLD
+        ):
             return -1
-        if latest_mfi < threshold_uptrend and Algo.determine_trend(old_mfi, latest_mfi) == Trend.RISING:
+        if (
+            latest_mfi < threshold_uptrend
+            and Algo.determine_trend(old_mfi, latest_mfi) == Trend.RISING
+            and Algo.calculate_slope_abs(old_mfi, latest_mfi) > MFI_SLOPE_THRESHOLD
+        ):
             return 1
         return 0

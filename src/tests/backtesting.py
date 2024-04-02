@@ -12,8 +12,8 @@ from algo.rsi import Rsi
 from helper.benchmark import Benchmark, Type
 from seis_data import SeisData
 
-SYMBOL = "SPY"
-EXCHANGE = ""
+SYMBOL = "ASML"
+EXCHANGE = "Euronext"
 INTERVAL = "1"
 NR_CANDLE = 1000
 
@@ -21,7 +21,7 @@ INIT_NR_CANDLE = 50
 
 SUGGESTION_THRESHOLD = 4
 EVA_DIFF_RATE = 1.0005
-EVA_NR_CANDLES = 30
+EVA_NR_CANDLES = 10
 
 tvl = TvDatafeedLive(config.USERNAME, config.PASSWORD)
 
