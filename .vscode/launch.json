@@ -19,5 +19,15 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src"
         },
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+        },
     ]
 }

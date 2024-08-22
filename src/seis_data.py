@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
 
 import pandas as pd
-from algo.algo import Algo
 from tvDatafeed import Consumer, Seis
+
+from algo.algo import Algo
 
 
 class SeisData:

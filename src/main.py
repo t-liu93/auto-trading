@@ -1,12 +1,13 @@
-import config
 import pandas as pd
+from tvDatafeed import Interval, Seis, TvDatafeedLive
+
+import config
 from algo.ma import Ma
 from algo.macd import Macd
 from algo.mfi import Mfi
 from algo.rsi import Rsi
 from helper import messaging
 from seis_data import SeisData
-from tvDatafeed import Interval, Seis, TvDatafeedLive
 
 tvl = TvDatafeedLive(config.USERNAME, config.PASSWORD)
 
