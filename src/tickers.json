@@ -1,0 +1,6 @@
+{
+    "EURUSD": {
+        "min_size": 15,
+        "threshold": 37
+    }
+}
