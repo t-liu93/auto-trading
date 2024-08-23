@@ -1,22 +1,13 @@
-annotated-types==0.6.0
-appdirs==1.4.4
-certifi==2024.2.2
+certifi==2024.7.4
 charset-normalizer==3.3.2
-idna==3.6
-numpy==1.26.4
-pandas==2.2.1
-pathlib==1.0.1
-pydantic==2.6.4
-pydantic_core==2.16.3
+idna==3.7
+numpy==2.1.0
+pandas==2.2.2
 python-dateutil==2.9.0.post0
-python-dotenv==1.0.1
 pytz==2024.1
-requests==2.31.0
-setuptools==69.2.0
+requests==2.32.3
 six==1.16.0
-TA-Lib==0.4.32
-tvdatafeed @ git+https://github.com/t-liu93/tvdatafeed.git@3320669b88732fb34d8daea4ebc1de1ed2d86a16
-typing_extensions==4.10.0
+-e git+https://github.com/t-liu93/tvdatafeed.git@3320669b88732fb34d8daea4ebc1de1ed2d86a16#egg=tvdatafeed
 tzdata==2024.1
-urllib3==2.2.1
-websocket-client==1.7.0
+urllib3==2.2.2
+websocket-client==1.8.0
